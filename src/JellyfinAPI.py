@@ -265,3 +265,27 @@ class ServerConnection:
 
         if r.status_code != 204:
             print(r.status_code)
+
+    def search_for_music_track_by_name(self, name):
+        params = {
+            'searchTerm': name,
+            'Limit': 24,
+            'Fields': 'PrimaryImageAspectRatio, CanDelete, BasicSyncInfo, '
+                      'MediaSourceCount',
+            'Recursive': True,
+            'EnableTotalRecordCount': False,
+            'ImageTypeLimit': 1,
+            'IncludePeople': False,
+            'IncludeMedia': True,
+            'IncludeGenres': False,
+            'IncludeStudios': False,
+            'IncludeArtists': False,
+            'IncludeItemTypes': 'Audio'
+        }
+
+        r = requests.get(f'{self.server_url}/Users/{self.user_id}/Items',
+                         headers=self.headers, params=params)
+
+        response = json.loads(r.content.decode('utf-8'))
+
+        return response['Items']
