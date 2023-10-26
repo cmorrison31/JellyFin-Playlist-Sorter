@@ -141,6 +141,22 @@ class ServerConnection:
 
         return r.status_code
 
+    def remove_items_from_playlist(self, playlist_id, item_ids):
+        if not isinstance(item_ids, list):
+            item_ids = [item_ids, ]
+
+        for i, item in enumerate(item_ids):
+            item_ids[i] = item['PlaylistItemId']
+
+        params = {
+            'EntryIds': item_ids,
+        }
+
+        r = requests.delete(f'{self.server_url}/Playlists/{playlist_id}/Items',
+                            headers=self.headers, params=params)
+
+        return r.status_code
+
     def get_playlist_items(self, playlist_id):
         params = {
             'UserId': self.user_id
@@ -269,7 +285,6 @@ class ServerConnection:
     def search_for_music_track_by_name(self, name):
         params = {
             'searchTerm': name,
-            'Limit': 24,
             'Fields': 'PrimaryImageAspectRatio, CanDelete, BasicSyncInfo, '
                       'MediaSourceCount',
             'Recursive': True,
